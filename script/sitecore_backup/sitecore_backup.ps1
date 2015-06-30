@@ -65,6 +65,12 @@ function Main()
 
     $INI_PATH = $SCRIPT_NAME -replace (".ps1", ".ini")
 
+    if(!(Test-Path $INI_PATH))
+    {
+        Write-Output "Error: Invalid INI_PATH $INI_PATH"
+        Return
+    }
+
     $INI = LoadIni $INI_PATH
 
     $BACKUP_DIR = $INI["BACKUP_DIR"]
@@ -111,6 +117,7 @@ function Main()
     }
     catch
     {
+        Write-Output "Error: BackupSitecore failed"
         Write-Output $Error
     }
 
