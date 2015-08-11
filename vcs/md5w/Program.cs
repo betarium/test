@@ -17,9 +17,31 @@ namespace md5w
             }
 
             string path = args[0];
-            var bytes = File.ReadAllBytes(path);
+
             var md5service = MD5CryptoServiceProvider.Create();
-            var hash = md5service.ComputeHash(bytes);
+
+            using (var file = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            {
+                byte[] buf = new byte[1024];
+                int len = 0;
+                byte[] tmphash = new byte[1024];
+                while (true)
+                {
+                    len = file.Read(buf, 0, buf.Length);
+                    if (file.Position >= file.Length)
+                    {
+                        break;
+                    }
+                    md5service.TransformBlock(buf, 0, len, tmphash, 0);
+                }
+                md5service.TransformFinalBlock(buf, 0, len);
+            }
+            var hash = md5service.Hash;
+
+            /*
+            var bytes = File.ReadAllBytes(path);
+            var hash = md5service.ComputeHash(buf);
+            */
 
             StringBuilder hashStr = new StringBuilder();
             for (int i = 0; i < hash.Length; i++)
@@ -28,6 +50,7 @@ namespace md5w
             }
 
             System.Diagnostics.Debug.WriteLine(hashStr);
+            System.Console.WriteLine(Path.GetFileName(path));
             System.Console.WriteLine(hashStr);
         }
     }
