@@ -16,20 +16,31 @@ function LoadIni($filename)
 
 function SendMail($conf, $mailSubject, $mailBody)
 {
-    if($conf["MailTo"] -eq "0"){
-        return
-    }
-
     $password = ConvertTo-SecureString $conf["SmtpPassword"] -AsPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($conf["SmtpUser"], $password)
 
-    Send-MailMessage -To $conf["MailTo"] -From $conf["MailFrom"] `
+    $mailTo = $conf["MailTo"]
+    $mailTo = $mailTo -split ","
+    $mailBody = $mailBody.Replace("\n", "`n")
+
+    $SmtpUseSsl = $conf["SmtpUseSsl"]
+
+    if($SmtpUseSsl -eq "1")
+    {
+        $SmtpUseSsl = $true
+    }
+    else
+    {
+        $SmtpUseSsl = $false
+    }
+
+    Send-MailMessage -To $mailTo -From $conf["MailFrom"] `
         -Subject $mailSubject -Body $mailBody `
-        -SmtpServer $conf["SmtpServer"] -Port $conf["SmtpPort"] `
+        -SmtpServer $conf["SmtpServer"] -Port $conf["SmtpPort"] -UseSsl:$SmtpUseSsl `
         -Credential $credential -Encoding UTF8
 }
 
-$INI_PATH = $MyInvocation.MyCommand.Path + ".ini"
+$INI_PATH = ([System.IO.Path]::ChangeExtension($MyInvocation.MyCommand.Path, ".ini"))
 $BASE_PATH = $MyInvocation.MyCommand.Path
 $BASE_PATH = Split-Path -Parent $BASE_PATH
 
@@ -49,7 +60,9 @@ $SearchResults = $Search.Search("IsInstalled=0 and IsHidden=0 and AutoSelectOnWe
 $AvailableUpdates = $SearchResults.Updates
 
 if($AvailableUpdates.count -eq 0){
-    Write-Output "No update patch."
+    $message = "No update patch."
+    Write-Output $message
+    #SendMail $INI "No update - WindowsUpdate.ps1" ($message + $MailFooter)
     Exit
 }
 
@@ -107,7 +120,7 @@ if ($Results.RebootRequired) {
     Write-Output "Reboot."
     SendMail $INI "Reboot - WindowsUpdate.ps1" ("Reboot." + $MailFooter)
     stop-transcript
-    Restart-Computer -F
+    Restart-Computer -Force
 }
 
 stop-transcript
