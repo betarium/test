@@ -16,6 +16,11 @@ function LoadIni($filename)
 
 function SendMail($conf, $mailSubject, $mailBody)
 {
+    if($conf["MailEnable"] -ne "1")
+    {
+        return;
+    }
+
     $password = ConvertTo-SecureString $conf["SmtpPassword"] -AsPlainText -Force
     $credential = New-Object System.Management.Automation.PSCredential($conf["SmtpUser"], $password)
 
@@ -66,21 +71,20 @@ if($AvailableUpdates.count -eq 0){
     Exit
 }
 
-$message = "Windows Update start."
-Write-Output $message
-SendMail $INI "Update Check - WindowsUpdate.ps1" ($message + $MailFooter)
-
 $UpdateCount = $AvailableUpdates.count
 Write-Output "$UpdateCount patch found(s)."
 
-Write-Output "Start download."
+#Write-Output "Start download."
 
 $DownloadCollection = New-Object -com "Microsoft.Update.UpdateColl"
 
+$patchDetail = ""
+
 $AvailableUpdates | ForEach-Object {
-    Write-Output "  Patch: " $_.Title
+    Write-Output ("  Patch: " + $_.Title)
 
     if ($_.InstallationBehavior.CanRequestUserInput -ne $TRUE) {
+        $patchDetail = $patchDetail + $_.Title + "`n"
         $DownloadCollection.Add($_) | Out-Null
     }
     else {
@@ -90,6 +94,10 @@ $AvailableUpdates | ForEach-Object {
         Write-Output "  Required reboot."
     }
 }
+
+$message = "Windows Update start."
+Write-Output $message
+SendMail $INI "Update start - WindowsUpdate.ps1" ($message + "`n`n[Patch]`n" + $patchDetail + "`n" + $MailFooter)
 
 $Downloader = $Session.CreateUpdateDownloader()
 $Downloader.Updates = $DownloadCollection
@@ -113,12 +121,17 @@ $Results = $Installer.Install()
 
 $message = "Windows Update complete."
 Write-Output $message
-SendMail $INI "Update complete - WindowsUpdate.ps1" ($message + $MailFooter)
 
+$mailTitle = "Update complete"
+$rebootMessage = ""
+if ($Results.RebootRequired) {
+    $mailTitle = "Update complete & Reboot"
+}
+
+SendMail $INI ($mailTitle + " - WindowsUpdate.ps1") ($message + "`n`n[Patch]`n" + $patchDetail + "`n" + $MailFooter)
 
 if ($Results.RebootRequired) {
     Write-Output "Reboot."
-    SendMail $INI "Reboot - WindowsUpdate.ps1" ("Reboot." + $MailFooter)
     stop-transcript
     Restart-Computer -Force
 }

@@ -1,0 +1,1 @@
+powershell -NoProfile -ExecutionPolicy RemoteSigned "Start-Process powershell.exe -Verb runas -ArgumentList ""-NoExit Set-ExecutionPolicy RemoteSigned -Force -Scope LocalMachine`nGet-ExecutionPolicy -Scope LocalMachine"""
