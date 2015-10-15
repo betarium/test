@@ -1,4 +1,11 @@
-﻿function LoadIni($filename)
+﻿# Set-ExecutionPolicy RemoteSigned
+
+Param (
+    [string]$Subject = "",
+    [string]$Message = ""
+)
+
+function LoadIni($filename)
 {
     $result = @{}
     $lines = get-content $filename
@@ -40,7 +47,7 @@ function SendMail($conf, $mailSubject, $mailBody)
         -Credential $credential -Encoding UTF8
 }
 
-function Main($scriptPath)
+function Main($scriptPath, $Subject, $Message)
 {
 	Write-Output "Start SendMail."
 
@@ -48,11 +55,17 @@ function Main($scriptPath)
 
 	$INI = LoadIni $INI_PATH
 
-	$subject = $INI["MailSubject"]
-	$message = $INI["MailMessage"]
-	$message += "`n`n" + "Host:" + $Env:COMPUTERNAME + "`n"
+	if($Subject -eq "")
+	{
+		$Subject = $INI["MailSubject"]
+	}
+	if($Message -eq "")
+	{
+		$Message = $INI["MailMessage"]
+	}
+	$Message += "`n`n" + "Host:" + $Env:COMPUTERNAME + "`n"
 
-	SendMail $INI $subject $message
+	SendMail $INI $Subject $Message
 
 	Write-Output ("Complete SendMail. mailto=" + $INI["MailTo"])
 }
@@ -64,7 +77,7 @@ try
 	$error.clear()
 	start-transcript ([System.IO.Path]::ChangeExtension($MyInvocation.MyCommand.Path, ".log"))
 
-	Main $MyInvocation.MyCommand.Path
+	Main $MyInvocation.MyCommand.Path $Subject $Message
 
 	Exit 0
 }
