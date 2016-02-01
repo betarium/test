@@ -24,6 +24,7 @@ function BackupSitecore($conf)
     $TARGET_SITE = $conf["TARGET_SITE"]
     $TARGET_DBSVR = $conf["TARGET_DBSVR"]
     $BACKUP_DATABASE = $conf["BACKUP_DATABASE"]
+    $WEBSITE_DIR = $conf["WEBSITE_DIR"]
 
     if (!( Test-Path $BACKUP_TARGET_DIR)) {
         mkdir $BACKUP_TARGET_DIR | Out-Null
@@ -44,13 +45,13 @@ function BackupSitecore($conf)
 
     Write-Output "start backup file"
 
-    Copy-Item -Path C:\inetpub\wwwroot\${TARGET_SITE}\Website\App_Config -Destination $BACKUP_TARGET_DIR -Recurse -Force
+    Copy-Item -Path ${WEBSITE_DIR}\${TARGET_SITE}\Website\App_Config -Destination $BACKUP_TARGET_DIR -Recurse -Force
 
-    Copy-Item -Path C:\inetpub\wwwroot\${TARGET_SITE}\Website\bin -Destination $BACKUP_TARGET_DIR -Recurse -Force
+    Copy-Item -Path ${WEBSITE_DIR}\${TARGET_SITE}\Website\bin -Destination $BACKUP_TARGET_DIR -Recurse -Force
 
-    Copy-Item -Path C:\inetpub\wwwroot\${TARGET_SITE}\Website\layouts $BACKUP_TARGET_DIR -Recurse -Force
+    Copy-Item -Path ${WEBSITE_DIR}\${TARGET_SITE}\Website\layouts $BACKUP_TARGET_DIR -Recurse -Force
 
-    Copy-Item -Path C:\inetpub\wwwroot\${TARGET_SITE}\Website\Web.config $BACKUP_TARGET_DIR -Force
+    Copy-Item -Path ${WEBSITE_DIR}\${TARGET_SITE}\Website\Web.config $BACKUP_TARGET_DIR -Force
 
     Write-Output "complete backup file"
 }
@@ -60,8 +61,9 @@ function Main()
     $Error.Clear()
 
     #$SCRIPT_NAME = $script:MyInvocation.MyCommand.Path
+    $BASE_DIR = & { Split-Path -Parent $MyInvocation.ScriptName }
     $NOW_KEY = [DateTime]::Now.ToString("yyyyMMdd_HHmmss");
-    $SCRIPT_NAME = $myInvocation.ScriptName
+    $SCRIPT_NAME = & { $MyInvocation.ScriptName }
 
     $INI_PATH = $SCRIPT_NAME -replace (".ps1", ".ini")
 
@@ -72,6 +74,16 @@ function Main()
     }
 
     $INI = LoadIni $INI_PATH
+
+    if($INI["BACKUP_DIR"] -eq $Null)
+    {
+        $INI["BACKUP_DIR"] = $BASE_DIR
+    }
+
+    if($INI["WEBSITE_DIR"] -eq $Null)
+    {
+        $INI["WEBSITE_DIR"] = "C:\inetpub\wwwroot"
+    }
 
     $BACKUP_DIR = $INI["BACKUP_DIR"]
     $BACKUP_KEY = $INI["BACKUP_KEY"]

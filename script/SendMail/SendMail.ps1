@@ -23,8 +23,12 @@ function LoadIni($filename)
 
 function SendMail($conf, $mailSubject, $mailBody)
 {
-    $password = ConvertTo-SecureString $conf["SmtpPassword"] -AsPlainText -Force
-    $credential = New-Object System.Management.Automation.PSCredential($conf["SmtpUser"], $password)
+    $credential = $null
+    if($conf["SmtpUser"] -ne "" -and $conf["SmtpPassword"] -ne "")
+    {
+        $password = ConvertTo-SecureString $conf["SmtpPassword"] -AsPlainText -Force
+        $credential = New-Object System.Management.Automation.PSCredential($conf["SmtpUser"], $password)
+    }
 
     $mailTo = $conf["MailTo"]
     $mailTo = $mailTo -split ","
