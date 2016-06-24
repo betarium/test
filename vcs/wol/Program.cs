@@ -20,7 +20,7 @@ namespace wol
             }
 
             var packet = new List<string>();
-            packet.AddRange(Enumerable.Repeat("FF", 16));
+            packet.AddRange(Enumerable.Repeat("FF", 6));
 
             var mac = args[0].Split('-');
             for (int i = 0; i < 16; i++)
