@@ -77,24 +77,36 @@ namespace WorkReportWin
 
         private bool LoadData()
         {
+            beginDateField.Text = "";
+            endDateField.Text = "";
+            startupCtrl.Text = "";
+            shutdownCtrl.Text = "";
+            beginDateInput.Text = "";
+            endDateInput.Text = "";
+            beginButton.Enabled = true;
+            endButton.Enabled = true;
+
             string targetMonth = workDateCtrl.Value.ToString("yyyy-MM");
             string targetDate = workDateCtrl.Value.ToString("yyyy-MM-dd");
             string fileName = "WorkReport_" + targetMonth + ".xml";
             string filePath = Path.Combine(ConfigDir, fileName);
             if (!File.Exists(filePath))
             {
+                LoadDataUpdateField();
                 return false;
             }
 
             var document = LoadDocument(filePath);
             if (document == null)
             {
+                LoadDataUpdateField();
                 return false;
             }
 
             var rootFolder = document.SelectSingleNode("WorkReport/WorkDataList");
             if (rootFolder == null)
             {
+                LoadDataUpdateField();
                 return false;
             }
 
@@ -102,6 +114,7 @@ namespace WorkReportWin
 
             if (targetNode == null)
             {
+                LoadDataUpdateField();
                 return false;
             }
 
@@ -118,13 +131,25 @@ namespace WorkReportWin
             beginDateInput.Text = "";
             endDateInput.Text = "";
 
-            if (workDate.Date == DateTime.Today)
+            LoadDataUpdateField();
+
+            return true;
+        }
+
+        private void LoadDataUpdateField()
+        {
+            if (workDateCtrl.Value.Date == DateTime.Today)
             {
                 beginButton.Enabled = true;
                 endButton.Enabled = true;
                 if (beginDateField.Text == "")
                 {
-                    beginDateInput.Text = DateTime.Now.ToString("HH:mm");
+                    var now = DateTime.Now;
+                    //var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
+                    var now2 = now.AddMinutes(9);
+                    now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute / 10 * 10, 0);
+                    beginDateInput.Text = now2.ToString("HH:mm");
+                    //beginDateInput.Text = DateTime.Now.ToString("HH:mm");
                 }
                 else
                 {
@@ -145,7 +170,6 @@ namespace WorkReportWin
                 endButton.Enabled = false;
             }
 
-            return true;
         }
 
         public enum SaveDataMode
@@ -374,11 +398,7 @@ namespace WorkReportWin
 
         private void workDateCtrl_ValueChanged(object sender, EventArgs e)
         {
-            if (!LoadData())
-            {
-                beginDateInput.Text = "";
-                endDateInput.Text = "";
-            }
+            LoadData();
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -404,6 +424,19 @@ namespace WorkReportWin
         {
             SaveData(SaveDataMode.End);
             LoadData();
+        }
+
+        private void MainForm_Activated(object sender, EventArgs e)
+        {
+            if (workDateCtrl.Value.Date == DateTime.Today)
+            {
+                if (beginDateField.Text != "" && endDateField.Text == "")
+                {
+                    var now = DateTime.Now;
+                    var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, (now.Minute) / 10 * 10, 0);
+                    endDateInput.Text = now2.ToString("HH:mm");
+                }
+            }
         }
     }
 }
