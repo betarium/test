@@ -147,7 +147,7 @@ namespace WorkReportWin
                     var now = DateTime.Now;
                     //var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
                     var now2 = now.AddMinutes(9);
-                    now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute / 10 * 10, 0);
+                    now2 = new DateTime(now2.Year, now2.Month, now2.Day, now2.Hour, now2.Minute / 10 * 10, 0);
                     beginDateInput.Text = now2.ToString("HH:mm");
                     //beginDateInput.Text = DateTime.Now.ToString("HH:mm");
                 }
