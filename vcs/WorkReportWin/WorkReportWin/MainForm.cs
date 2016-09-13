@@ -14,7 +14,7 @@ namespace WorkReportWin
 {
     public partial class MainForm : Form
     {
-        private string ConfigDir;
+        private static string ConfigDir;
 
         public MainForm()
         {
@@ -56,10 +56,12 @@ namespace WorkReportWin
              * */
             if (beginDateField.Text != "")
             {
-                if (WindowState == FormWindowState.Minimized)
-                {
-                    Visible = false;
-                }
+                WindowState = FormWindowState.Minimized;
+                //Visible = false;
+                //if (WindowState == FormWindowState.Minimized)
+                //{
+                //    Visible = false;
+                //}
             }
         }
 
@@ -85,6 +87,8 @@ namespace WorkReportWin
             endDateInput.Text = "";
             beginButton.Enabled = true;
             endButton.Enabled = true;
+            beginButtonEdit.Enabled = false;
+            endButtonEdit.Enabled = false;
 
             string targetMonth = workDateCtrl.Value.ToString("yyyy-MM");
             string targetDate = workDateCtrl.Value.ToString("yyyy-MM-dd");
@@ -140,10 +144,13 @@ namespace WorkReportWin
         {
             if (workDateCtrl.Value.Date == DateTime.Today)
             {
-                beginButton.Enabled = true;
-                endButton.Enabled = true;
+                beginButton.Enabled = false;
+                endButton.Enabled = false;
+                beginButtonEdit.Enabled = false;
+                endButtonEdit.Enabled = false;
                 if (beginDateField.Text == "")
                 {
+                    beginButton.Enabled = true;
                     var now = DateTime.Now;
                     //var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
                     var now2 = now.AddMinutes(9);
@@ -153,14 +160,15 @@ namespace WorkReportWin
                 }
                 else
                 {
-                    beginButton.Enabled = false;
+                    beginButtonEdit.Enabled = true;
                     if (endDateField.Text == "")
                     {
+                        endButton.Enabled = true;
                         endDateInput.Text = DateTime.Now.ToString("HH:mm");
                     }
                     else
                     {
-                        endButton.Enabled = false;
+                        endButtonEdit.Enabled = true;
                     }
                 }
             }
@@ -168,8 +176,82 @@ namespace WorkReportWin
             {
                 beginButton.Enabled = false;
                 endButton.Enabled = false;
+                beginButtonEdit.Enabled = true;
+                endButtonEdit.Enabled = true;
             }
 
+        }
+
+        public class WorkInfo
+        {
+            public DateTime WorkDate { get; set; }
+            public DateTime? BeginTime { get; set; }
+            public DateTime? EndTime { get; set; }
+            public DateTime? StartupTime { get; set; }
+            public DateTime? ShutdownTime { get; set; }
+        }
+
+        private static bool LoadDataFile(DateTime targetDate, out WorkInfo workDateInfo)
+        {
+            workDateInfo = null;
+            //beginDateField.Text = "";
+            //endDateField.Text = "";
+            //startupCtrl.Text = "";
+            //shutdownCtrl.Text = "";
+            //beginDateInput.Text = "";
+            //endDateInput.Text = "";
+            //beginButton.Enabled = true;
+            //endButton.Enabled = true;
+
+            string targetDateStr = targetDate.ToString("yyyy-MM-dd");
+            string targetMonth = targetDate.ToString("yyyy-MM");
+            string fileName = "WorkReport_" + targetMonth + ".xml";
+            string filePath = Path.Combine(ConfigDir, fileName);
+            if (!File.Exists(filePath))
+            {
+                return false;
+            }
+
+            var document = LoadDocument(filePath);
+            if (document == null)
+            {
+                return false;
+            }
+
+            var rootFolder = document.SelectSingleNode("WorkReport/WorkDataList");
+            if (rootFolder == null)
+            {
+                return false;
+            }
+
+            XmlElement targetNode = FindData(document, targetDateStr, false);
+
+            if (targetNode == null)
+            {
+                return false;
+            }
+
+            workDateInfo = new WorkInfo();
+
+            string workDateStr = targetNode.GetAttribute("date");
+            DateTime workDate = DateTime.ParseExact(workDateStr, "yyyy-MM-dd", null, System.Globalization.DateTimeStyles.None);
+            workDateInfo.WorkDate = workDate;
+            workDateInfo.BeginTime = ParseTime(targetNode.GetAttribute("begin"));
+            workDateInfo.EndTime = ParseTime(targetNode.GetAttribute("end"));
+            workDateInfo.StartupTime = ParseTime(targetNode.GetAttribute("startup"));
+            workDateInfo.ShutdownTime = ParseTime(targetNode.GetAttribute("shutdown"));
+
+            return true;
+        }
+
+        private static DateTime? ParseTime(string str)
+        {
+            if (string.IsNullOrEmpty(str))
+            {
+                return null;
+            }
+            DateTime workDate = DateTime.ParseExact(str, "HH:mm", null, System.Globalization.DateTimeStyles.None);
+            return workDate;
         }
 
         public enum SaveDataMode
@@ -195,7 +277,7 @@ namespace WorkReportWin
                 document = CreateDocument();
             }
 
-            string targetDate = DateTime.Today.ToString("yyyy-MM-dd");
+            string targetDate = workDateCtrl.Value.ToString("yyyy-MM-dd");
             XmlElement targetNode = FindData(document, targetDate, true);
 
             if (mode == SaveDataMode.Begin)
@@ -313,7 +395,7 @@ namespace WorkReportWin
         }
         */
 
-        private XmlElement FindData(XmlDocument document, string targetDate, bool create)
+        private static XmlElement FindData(XmlDocument document, string targetDate, bool create)
         {
             var rootFolder = document.SelectSingleNode("WorkReport/WorkDataList");
             if (rootFolder == null)
@@ -347,7 +429,7 @@ namespace WorkReportWin
             return targetNode;
         }
 
-        private XmlDocument CreateDocument()
+        private static XmlDocument CreateDocument()
         {
             var document = new XmlDocument();
             XmlDeclaration declaration = document.CreateXmlDeclaration("1.0", null, null);
@@ -366,7 +448,7 @@ namespace WorkReportWin
             return document;
         }
 
-        private XmlDocument LoadDocument(string filePath)
+        private static XmlDocument LoadDocument(string filePath)
         {
             var document = new XmlDocument();
             document.Load(filePath);
@@ -436,6 +518,48 @@ namespace WorkReportWin
                     var now2 = new DateTime(now.Year, now.Month, now.Day, now.Hour, (now.Minute) / 10 * 10, 0);
                     endDateInput.Text = now2.ToString("HH:mm");
                 }
+            }
+        }
+
+        private void exportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StringBuilder buffer = new StringBuilder();
+
+            buffer.AppendLine("WorkDay" + "\t" + "BeginTime" + "\t" + "EndTime");
+
+            DateTime beginDay = workDateCtrl.Value;
+            beginDay = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            for (int i = 0; ; i++)
+            {
+                DateTime targetDay = beginDay.AddDays(i);
+                if (targetDay.Month != beginDay.Month)
+                {
+                    break;
+                }
+                WorkInfo info = null;
+                if (!LoadDataFile(targetDay, out info))
+                {
+                    info = new WorkInfo();
+                    info.WorkDate = targetDay;
+                }
+                buffer.AppendLine(info.WorkDate.ToString("yyyy-MM-dd") + "\t" + (info.BeginTime.HasValue ? info.BeginTime.Value.ToString("HH:mm") : "") + "\t" + (info.EndTime.HasValue ? info.EndTime.Value.ToString("HH:mm") : ""));
+            }
+
+            string path = Path.Combine(Application.StartupPath, "export.csv");
+            File.WriteAllText(path, buffer.ToString(), new UTF8Encoding(true));
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                Hide();
             }
         }
     }

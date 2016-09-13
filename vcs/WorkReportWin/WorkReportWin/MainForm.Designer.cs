@@ -49,12 +49,17 @@
             this.beginDateField = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.endDateField = new System.Windows.Forms.TextBox();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.applicationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.quitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(11, 45);
+            this.label1.Location = new System.Drawing.Point(1, 65);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 12);
             this.label1.TabIndex = 0;
@@ -63,7 +68,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(12, 77);
+            this.label2.Location = new System.Drawing.Point(2, 97);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(53, 12);
             this.label2.TabIndex = 2;
@@ -71,21 +76,21 @@
             // 
             // beginDateInput
             // 
-            this.beginDateInput.Location = new System.Drawing.Point(76, 42);
+            this.beginDateInput.Location = new System.Drawing.Point(66, 62);
             this.beginDateInput.Name = "beginDateInput";
             this.beginDateInput.Size = new System.Drawing.Size(72, 19);
             this.beginDateInput.TabIndex = 1;
             // 
             // endDateInput
             // 
-            this.endDateInput.Location = new System.Drawing.Point(76, 74);
+            this.endDateInput.Location = new System.Drawing.Point(66, 94);
             this.endDateInput.Name = "endDateInput";
             this.endDateInput.Size = new System.Drawing.Size(72, 19);
             this.endDateInput.TabIndex = 4;
             // 
             // beginButton
             // 
-            this.beginButton.Location = new System.Drawing.Point(157, 40);
+            this.beginButton.Location = new System.Drawing.Point(147, 60);
             this.beginButton.Name = "beginButton";
             this.beginButton.Size = new System.Drawing.Size(75, 23);
             this.beginButton.TabIndex = 2;
@@ -95,7 +100,7 @@
             // 
             // endButton
             // 
-            this.endButton.Location = new System.Drawing.Point(157, 72);
+            this.endButton.Location = new System.Drawing.Point(147, 92);
             this.endButton.Name = "endButton";
             this.endButton.Size = new System.Drawing.Size(75, 23);
             this.endButton.TabIndex = 5;
@@ -107,7 +112,7 @@
             // 
             this.workDateCtrl.CustomFormat = "yyyy-MM-dd (ddd)";
             this.workDateCtrl.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.workDateCtrl.Location = new System.Drawing.Point(76, 12);
+            this.workDateCtrl.Location = new System.Drawing.Point(66, 32);
             this.workDateCtrl.Name = "workDateCtrl";
             this.workDateCtrl.Size = new System.Drawing.Size(156, 19);
             this.workDateCtrl.TabIndex = 0;
@@ -117,7 +122,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 12);
+            this.label3.Location = new System.Drawing.Point(2, 32);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 8;
@@ -132,7 +137,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(14, 163);
+            this.label4.Location = new System.Drawing.Point(4, 183);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 12);
             this.label4.TabIndex = 9;
@@ -140,7 +145,7 @@
             // 
             // startupCtrl
             // 
-            this.startupCtrl.Location = new System.Drawing.Point(76, 160);
+            this.startupCtrl.Location = new System.Drawing.Point(66, 180);
             this.startupCtrl.Name = "startupCtrl";
             this.startupCtrl.ReadOnly = true;
             this.startupCtrl.Size = new System.Drawing.Size(100, 19);
@@ -150,7 +155,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 188);
+            this.label5.Location = new System.Drawing.Point(4, 208);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(53, 12);
             this.label5.TabIndex = 9;
@@ -158,7 +163,7 @@
             // 
             // shutdownCtrl
             // 
-            this.shutdownCtrl.Location = new System.Drawing.Point(76, 185);
+            this.shutdownCtrl.Location = new System.Drawing.Point(66, 205);
             this.shutdownCtrl.Name = "shutdownCtrl";
             this.shutdownCtrl.ReadOnly = true;
             this.shutdownCtrl.Size = new System.Drawing.Size(100, 19);
@@ -167,7 +172,7 @@
             // 
             // beginButtonEdit
             // 
-            this.beginButtonEdit.Location = new System.Drawing.Point(238, 40);
+            this.beginButtonEdit.Location = new System.Drawing.Point(228, 60);
             this.beginButtonEdit.Name = "beginButtonEdit";
             this.beginButtonEdit.Size = new System.Drawing.Size(75, 23);
             this.beginButtonEdit.TabIndex = 3;
@@ -177,7 +182,7 @@
             // 
             // endButtonEdit
             // 
-            this.endButtonEdit.Location = new System.Drawing.Point(238, 72);
+            this.endButtonEdit.Location = new System.Drawing.Point(228, 92);
             this.endButtonEdit.Name = "endButtonEdit";
             this.endButtonEdit.Size = new System.Drawing.Size(75, 23);
             this.endButtonEdit.TabIndex = 6;
@@ -188,7 +193,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(14, 113);
+            this.label6.Location = new System.Drawing.Point(4, 133);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(53, 12);
             this.label6.TabIndex = 9;
@@ -196,7 +201,7 @@
             // 
             // beginDateField
             // 
-            this.beginDateField.Location = new System.Drawing.Point(76, 110);
+            this.beginDateField.Location = new System.Drawing.Point(66, 130);
             this.beginDateField.Name = "beginDateField";
             this.beginDateField.ReadOnly = true;
             this.beginDateField.Size = new System.Drawing.Size(100, 19);
@@ -206,7 +211,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(14, 138);
+            this.label7.Location = new System.Drawing.Point(4, 158);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(53, 12);
             this.label7.TabIndex = 9;
@@ -214,12 +219,45 @@
             // 
             // endDateField
             // 
-            this.endDateField.Location = new System.Drawing.Point(76, 135);
+            this.endDateField.Location = new System.Drawing.Point(66, 155);
             this.endDateField.Name = "endDateField";
             this.endDateField.ReadOnly = true;
             this.endDateField.Size = new System.Drawing.Size(100, 19);
             this.endDateField.TabIndex = 10;
             this.endDateField.TabStop = false;
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.applicationToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(315, 24);
+            this.menuStrip1.TabIndex = 11;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // applicationToolStripMenuItem
+            // 
+            this.applicationToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.exportToolStripMenuItem,
+            this.quitToolStripMenuItem});
+            this.applicationToolStripMenuItem.Name = "applicationToolStripMenuItem";
+            this.applicationToolStripMenuItem.Size = new System.Drawing.Size(104, 20);
+            this.applicationToolStripMenuItem.Text = "アプリケーション(&A)";
+            // 
+            // exportToolStripMenuItem
+            // 
+            this.exportToolStripMenuItem.Name = "exportToolStripMenuItem";
+            this.exportToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.exportToolStripMenuItem.Text = "エクスポート(&E)";
+            this.exportToolStripMenuItem.Click += new System.EventHandler(this.exportToolStripMenuItem_Click);
+            // 
+            // quitToolStripMenuItem
+            // 
+            this.quitToolStripMenuItem.Name = "quitToolStripMenuItem";
+            this.quitToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
+            this.quitToolStripMenuItem.Text = "終了(&Q)";
+            this.quitToolStripMenuItem.Click += new System.EventHandler(this.quitToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -244,15 +282,20 @@
             this.Controls.Add(this.beginDateInput);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
+            this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
             this.Name = "MainForm";
             this.Text = "勤怠";
             this.Activated += new System.EventHandler(this.MainForm_Activated);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -279,6 +322,10 @@
         private System.Windows.Forms.TextBox beginDateField;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox endDateField;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem applicationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem quitToolStripMenuItem;
 
     }
 }
