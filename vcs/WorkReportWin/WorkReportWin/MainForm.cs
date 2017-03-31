@@ -525,10 +525,10 @@ namespace WorkReportWin
         {
             StringBuilder buffer = new StringBuilder();
 
-            buffer.AppendLine("WorkDay" + "\t" + "BeginTime" + "\t" + "EndTime");
+            buffer.AppendLine("WorkDay" + "," + "BeginTime" + "," + "EndTime");
 
             DateTime beginDay = workDateCtrl.Value;
-            beginDay = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            beginDay = new DateTime(beginDay.Year, beginDay.Month, 1);
 
             for (int i = 0; ; i++)
             {
@@ -543,10 +543,10 @@ namespace WorkReportWin
                     info = new WorkInfo();
                     info.WorkDate = targetDay;
                 }
-                buffer.AppendLine(info.WorkDate.ToString("yyyy-MM-dd") + "\t" + (info.BeginTime.HasValue ? info.BeginTime.Value.ToString("HH:mm") : "") + "\t" + (info.EndTime.HasValue ? info.EndTime.Value.ToString("HH:mm") : ""));
+                buffer.AppendLine(info.WorkDate.ToString("yyyy-MM-dd") + "," + (info.BeginTime.HasValue ? info.BeginTime.Value.ToString("HH:mm") : "") + "," + (info.EndTime.HasValue ? info.EndTime.Value.ToString("HH:mm") : ""));
             }
 
-            string path = Path.Combine(Application.StartupPath, "export.csv");
+            string path = Path.Combine(Application.StartupPath, "export" + beginDay .ToString("yyyyMM") + ".csv");
             File.WriteAllText(path, buffer.ToString(), new UTF8Encoding(true));
         }
 
